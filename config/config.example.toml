@@ -1,0 +1,43 @@
+[server]
+	Address     = ":8199"
+	ServerRoot  = "public"
+	ServerAgent = "informal-bot"
+	LogPath     = "/var/log/informal/server"
+
+[logger]
+    Path        = "/var/log/informal/logger"
+    Level       = "all"
+    Stdout      = true
+
+[viewer]
+    Path        = "template"
+    DefaultFile = "index.html"
+    Delimiters  =  ["{{", "}}"]
+
+
+[gfcli]
+    [gfcli.build]
+        name     = "informal_bot"
+        arch     = "amd64"
+        system   = "linux,darwin"
+        mod      = "none"
+        cgo      = 0
+        pack     = ""
+        output   = "./bin"
+        extra    = ""
+
+[database]
+    link  = "mysql:root:root@tcp(127.0.0.1:3306)/test"
+    debug = true
+    [database.logger]
+        Path   = "/var/log/informal/sql"
+        Level  = "all"
+        Stdout = true
+
+[urls]
+    InformalBotHookUrl = "http://#/"
+
+[crontabs]
+    Missions = [
+        { name="water", cron="0 0 10-18 * * *" },
+    ]
