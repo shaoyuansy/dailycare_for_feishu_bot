@@ -1,10 +1,12 @@
 package crontab
 
 import (
+	"fmt"
 	"informal/app/service/message"
 	logger "informal/libs"
 
 	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/os/gcron"
 	"github.com/gogf/gf/util/gconv"
 )
 
@@ -31,25 +33,28 @@ func (p *crontabService) Register() {
 			continue
 		}
 
-		// _, err := gcron.Add(cron, func() {
-		logger.Debug("[执行定时任务][10000]定时任务触发，场景：" + name + ",时间:" + cron)
-		params, err := message.SceneService.GenerateParams(name)
+		_, err := gcron.Add(cron, func() {
+			logger.Debug("[执行定时任务][10000]定时任务触发，场景：" + name + ",时间:" + cron)
+			params, err := message.SceneService.GenerateParams(name)
+			if err != nil {
+				logger.Error(err.Error())
+				return
+			}
+			msg, err := message.SceneService.MatchScene(name, params)
+			if err != nil {
+				logger.Error(err.Error())
+				return
+			}
+			er := message.FeishuBotService.SendMessage(msg)
+			if er != nil {
+				logger.Error(err.Error())
+				return
+			}
+		})
 		if err != nil {
-			logger.Error(err.Error())
+			logger.Error(fmt.Sprintf("[注册定时任务][20002]定时任务注册失败，场景：%s, 原因：%s", name, err.Error()))
+		} else {
+			logger.Info("[注册定时任务][10000]定时任务注册成功，场景：" + name)
 		}
-		msg, err := message.SceneService.MatchScene(name, params)
-		if err != nil {
-			logger.Error(err.Error())
-		}
-		er := message.FeishuBotService.SendMessage(msg)
-		if er != nil {
-			logger.Error(err.Error())
-		}
-		// })
-		// if err != nil {
-		// 	logger.Error(fmt.Sprintf("[注册定时任务][20002]定时任务注册失败，场景：%s, 原因：%s", name, err.Error()))
-		// } else {
-		// 	logger.Info("[注册定时任务][10000]定时任务注册成功，场景：" + name)
-		// }
 	}
 }
