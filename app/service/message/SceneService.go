@@ -27,7 +27,7 @@ func (s *sceneService) GenerateParams(scene string) (g.Map, error) {
 	case "water":
 		return g.Map{
 			"time": g.MapStrStr{
-				"content": gtime.Now().Format("Y-m-d H:i:s"),
+				"content": gtime.Now().Format("Y-m-d H:i"),
 				"type":    "string",
 			},
 			"tip": g.MapStrStr{
@@ -38,7 +38,18 @@ func (s *sceneService) GenerateParams(scene string) (g.Map, error) {
 	case "finish_work":
 		return g.Map{
 			"time": g.MapStrStr{
-				"content": gtime.Now().Format("Y-m-d H:i:s"),
+				"content": gtime.Now().Format("Y-m-d H:i"),
+				"type":    "string",
+			},
+			"tip": g.MapStrStr{
+				"content": tip,
+				"type":    "string",
+			},
+		}, nil
+	case "afternoon_tea":
+		return g.Map{
+			"time": g.MapStrStr{
+				"content": gtime.Now().Format("Y-m-d H:i"),
 				"type":    "string",
 			},
 			"tip": g.MapStrStr{
@@ -60,6 +71,10 @@ func (s *sceneService) MatchScene(scene string, params g.Map) (string, error) {
 		"finish_work": g.Map{
 			"params":   g.Slice{"time", "tip"},
 			"template": `{"config":{"wide_screen_mode":true},"elements":[{"fields":[{"is_short":true,"text":{"content":"**⏰ 时间：** \n\t%s","tag":"lark_md"}}],"tag":"div"},{"fields":[{"is_short":true,"text":{"content":"**❗ 通知：** \n\t%s","tag":"lark_md"}}],"tag":"div"}],"header":{"template":"orange","title":{"content":"📢 号外号外～","tag":"plain_text"}}}`,
+		},
+		"afternoon_tea": g.Map{
+			"params":   g.Slice{"time", "tip"},
+			"template": `{"config":{"wide_screen_mode":true},"elements":[{"fields":[{"is_short":true,"text":{"content":"**⏰ 现在是：** \n\t%s","tag":"lark_md"}}],"tag":"div"},{"fields":[{"is_short":true,"text":{"content":"**🍓 非说：** \n\t%s","tag":"lark_md"}}],"tag":"div"}],"header":{"template":"green","title":{"content":"🥤 下午茶即将发车，你要上车吗？","tag":"plain_text"}}}`,
 		},
 	}
 
