@@ -49,7 +49,7 @@ func (s *sceneService) MatchScene(scene string, params g.Map) (string, error) {
 	templateMap := g.Map{
 		"water": g.Map{
 			"params":   g.Slice{"time", "text"},
-			"template": `{"config":{"wide_screen_mode":true},"elements":[{"fields":[{"is_short":true,"text":{"content":"**⏰ 时间：** \n\t%s","tag":"lark_md"}}],"tag":"div"},{"fields":[{"is_short":true,"text":{"content":"**❤️ 非说：** \n\t%s","tag":"lark_md"}}],"tag":"div"},{"actions":[{"tag":"button","text":{"content":"☕ 干一杯","tag":"lark_md"},"type":"default"},{"tag":"button","text":{"content":"🤪 干一口","tag":"lark_md"},"type":"default"},{"tag":"button","text":{"content":"🤬 不渴","tag":"lark_md"},"type":"default"}],"tag":"action"}],"header":{"template":"wathet","title":{"content":"📢 喝水时间到啦","tag":"plain_text"}}}`,
+			"template": `{"config":{"wide_screen_mode":true},"elements":[{"fields":[{"is_short":true,"text":{"content":"**⏰ 时间：** \n\t%s","tag":"lark_md"}}],"tag":"div"},{"fields":[{"is_short":true,"text":{"content":"**❤️ 非说：** \n\t%s","tag":"lark_md"}}],"tag":"div"}],"header":{"template":"wathet","title":{"content":"📢 喝水时间到啦","tag":"plain_text"}}}`,
 		},
 	}
 
