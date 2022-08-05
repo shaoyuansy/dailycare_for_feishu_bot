@@ -3,7 +3,10 @@ package message
 import (
 	"errors"
 	"fmt"
+	"informal/app/dao"
+	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gtime"
@@ -17,9 +20,23 @@ type sceneService struct{}
 func (s *sceneService) GenerateParams(scene string) (g.Map, error) {
 	switch scene {
 	case "water":
+		tip := ""
+		tipsPoolResults, err := dao.TipsPool.Fields("content").Where("type", scene).Array()
+		if err != nil {
+			return g.Map{}, errors.New("[生成消息参数][20006]数据库查询错误，原因：" + err.Error())
+		}
+		if len(tipsPoolResults) > 0 {
+			rand.Seed(time.Now().UnixNano())
+			index := rand.Intn(len(tipsPoolResults))
+			tip = gconv.String(tipsPoolResults[index])
+		}
 		return g.Map{
 			"time": g.MapStrStr{
 				"content": gtime.Now().Format("Y-m-d H:i:s"),
+				"type":    "string",
+			},
+			"text": g.MapStrStr{
+				"content": tip,
 				"type":    "string",
 			},
 		}, nil
@@ -31,8 +48,8 @@ func (s *sceneService) GenerateParams(scene string) (g.Map, error) {
 func (s *sceneService) MatchScene(scene string, params g.Map) (string, error) {
 	templateMap := g.Map{
 		"water": g.Map{
-			"params":   g.Slice{"time"},
-			"template": `{"config":{"wide_screen_mode":true},"elements":[{"fields":[{"is_short":true,"text":{"content":"**⏰ 当前时间：** %s","tag":"lark_md"}}],"tag":"div"},{"fields":[{"is_short":true,"text":{"content":"**❤️ 温馨提示：** 工作再忙，也要按时补充水分","tag":"lark_md"}}],"tag":"div"},{"actions":[{"tag":"button","text":{"content":"👎 干一杯","tag":"lark_md"},"type":"default"},{"tag":"button","text":{"content":"🙂 干一口","tag":"lark_md"},"type":"default"},{"tag":"button","text":{"content":"👍 不渴","tag":"lark_md"},"type":"default"}],"tag":"action"}],"header":{"template":"orange","title":{"content":"📢 小非来啦","tag":"plain_text"}}}`,
+			"params":   g.Slice{"time", "text"},
+			"template": `{"config":{"wide_screen_mode":true},"elements":[{"fields":[{"is_short":true,"text":{"content":"**⏰ 时间：** \n\t%s","tag":"lark_md"}}],"tag":"div"},{"fields":[{"is_short":true,"text":{"content":"**❤️ 非说：** \n\t%s","tag":"lark_md"}}],"tag":"div"},{"actions":[{"tag":"button","text":{"content":"☕ 干一杯","tag":"lark_md"},"type":"default"},{"tag":"button","text":{"content":"🤪 干一口","tag":"lark_md"},"type":"default"},{"tag":"button","text":{"content":"🤬 不渴","tag":"lark_md"},"type":"default"}],"tag":"action"}],"header":{"template":"wathet","title":{"content":"📢 喝水时间到啦","tag":"plain_text"}}}`,
 		},
 	}
 
